@@ -84,7 +84,7 @@ window.renderStatistics = function (ctx, names, times) {
 
   var drawLongMessage = function (message) {
     message.split('\n').forEach(function (string, index) {
-      drawStringCenter(string, inner.y + index * text.LINE_HEIGHT, text.COLOR, inner.x + inner.width / 2)
+      drawStringCenter(string, inner.y + index * text.LINE_HEIGHT, text.COLOR, inner.x + inner.width / 2);
     });
   };
 
