@@ -77,9 +77,9 @@ var createSimilarWizards = function () {
 var createSimilarWizardsList = function () {
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < similarWizards.length; i++) {
-    fragment.appendChild(createSimilarWizardElement(similarWizards[i]));
-  }
+  similarWizards.forEach(function (similarWizardsElement) {
+    fragment.appendChild(createSimilarWizardElement(similarWizardsElement));
+  });
 
   similarWizardsList.appendChild(fragment);
   setup.querySelector('.setup-similar').classList.remove('hidden');
