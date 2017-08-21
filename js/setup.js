@@ -47,41 +47,8 @@ var createRandomInteger = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-var returnRandomArrayElement = function (array) {
+var getRandomArrayElement = function (array) {
   return array[createRandomInteger(0, array.length - 1)];
-};
-
-var returnRandomUniqueArrayElements = function (array, newLength) {
-  var element;
-  var uniqueElements = [];
-  var store = {};
-
-  newLength = newLength || createRandomInteger(0, array.length - 1);
-
-  for (var i = 0; i < newLength; i++) {
-    do {
-      element = returnRandomArrayElement(array);
-    } while (store[String(element)]);
-
-    uniqueElements[i] = element;
-    store[String(element)] = true;
-  }
-
-  return uniqueElements;
-};
-
-var sortArrayElementsRandomOrder = function (array) {
-  var number;
-  var store;
-
-  for (var i = array.length - 1; i > 0; i--) {
-    number = Math.floor(Math.random() * (i + 1));
-    store = array[number];
-    array[number] = array[i];
-    array[i] = store;
-  }
-
-  return array;
 };
 
 var createSimilarWizardElement = function (similarWizard) {
@@ -97,13 +64,11 @@ var createSimilarWizardElement = function (similarWizard) {
 var createSimilarWizards = function () {
   var similarWizards = [];
 
-  var firstNames = sortArrayElementsRandomOrder(returnRandomUniqueArrayElements(similarWizardParameters.FIRST_NAMES.concat(), similarWizardParameters.AMOUNT));
-  var secondNames = sortArrayElementsRandomOrder(returnRandomUniqueArrayElements(similarWizardParameters.SECOND_NAMES.concat(), similarWizardParameters.AMOUNT));
-  var coatColors = sortArrayElementsRandomOrder(returnRandomUniqueArrayElements(similarWizardParameters.COAT_COLORS.concat(), similarWizardParameters.AMOUNT));
-  var eyesColors = sortArrayElementsRandomOrder(returnRandomUniqueArrayElements(similarWizardParameters.EYES_COLORS.concat(), similarWizardParameters.AMOUNT));
+  var fullNames = createWizardUniqueFullNames(similarWizardParameters.AMOUNT);
+  var colorSchemes = createWizardUniqueColorSchemes(similarWizardParameters.AMOUNT);
 
   for (var i = 0; i < similarWizardParameters.AMOUNT; i++) {
-    similarWizards[i] = createWizard(firstNames[i], secondNames[i], coatColors[i], eyesColors[i]);
+    similarWizards[i] = createWizard(fullNames[i], colorSchemes[i]['coatColor'], colorSchemes[i]['eyesColor']);
   }
 
   return similarWizards;
@@ -120,18 +85,57 @@ var createSimilarWizardsList = function () {
   setup.querySelector('.setup-similar').classList.remove('hidden');
 };
 
-var createWizard = function (firstName, secondName, coatColor, eyesColor) {
+var createWizard = function (fullName, coatColor, eyesColor) {
   var wizard = {};
 
-  wizard.name = createWizardFullName(firstName, secondName);
+  wizard.name = fullName;
   wizard.coatColor = coatColor;
   wizard.eyesColor = eyesColor;
 
   return wizard;
 };
 
-var createWizardFullName = function (firstName, secondName) {
-  return createRandomInteger(0, 1) ? firstName + ' ' + secondName : secondName + ' ' + firstName;
+var createWizardUniqueColorSchemes = function (amount) {
+  var coatColor;
+  var eyesColor;
+  var colorScheme;
+  var store = {};
+  var uniqueColorSchemes = [];
+
+  for (var i = 0; i < amount; i++) {
+    do {
+      coatColor = getRandomArrayElement(similarWizardParameters.COAT_COLORS);
+      eyesColor = getRandomArrayElement(similarWizardParameters.EYES_COLORS);
+      colorScheme = coatColor + ' ' + eyesColor;
+    } while (store[colorScheme]);
+
+    uniqueColorSchemes[i] = {};
+    uniqueColorSchemes[i]['coatColor'] = coatColor;
+    uniqueColorSchemes[i]['eyesColor'] = eyesColor;
+    store[colorScheme] = true;
+  }
+
+  return uniqueColorSchemes;
+};
+
+var createWizardUniqueFullNames = function (amount) {
+  var firstName;
+  var secondName;
+  var store = {};
+  var uniqueFullNames = [];
+
+  for (var i = 0; i < amount; i++) {
+    firstName = createRandomInteger(0, 1) ? getRandomArrayElement(similarWizardParameters.FIRST_NAMES) : getRandomArrayElement(similarWizardParameters.SECOND_NAMES);
+
+    do {
+      secondName = createRandomInteger(0, 1) ? getRandomArrayElement(similarWizardParameters.FIRST_NAMES) : getRandomArrayElement(similarWizardParameters.SECOND_NAMES);
+    } while (store[secondName] || firstName === secondName);
+
+    uniqueFullNames[i] = firstName + ' ' + secondName;
+    store[secondName] = true;
+  }
+
+  return uniqueFullNames;
 };
 
 setup.classList.remove('hidden');
