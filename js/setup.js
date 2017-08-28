@@ -39,7 +39,6 @@ wizardParameter.coatColor.VALUES = [
   'rgb(0, 0, 0)'
 ];
 wizardParameter.coatColor.DEFAULT = setupCoatColorInput.getAttribute('value');
-wizardParameter.coatColor.currentNumber = 0;
 
 wizardParameter.eyesColor = {};
 wizardParameter.eyesColor.VALUES = [
@@ -50,7 +49,6 @@ wizardParameter.eyesColor.VALUES = [
   'green'
 ];
 wizardParameter.eyesColor.DEFAULT = setupEyesColorInput.getAttribute('value');
-wizardParameter.eyesColor.currentNumber = 0;
 
 wizardParameter.fireballColor = {};
 wizardParameter.fireballColor.VALUES = [
@@ -61,7 +59,12 @@ wizardParameter.fireballColor.VALUES = [
   '#e6e848'
 ];
 wizardParameter.fireballColor.DEFAULT = setupFireballColorInput.getAttribute('value');
-wizardParameter.fireballColor.currentNumber = 0;
+
+
+var currentNumber = {};
+currentNumber.coatColor = 0;
+currentNumber.eyesColor = 0;
+currentNumber.fireballColor = 0;
 
 
 var similarWizardParameters = {};
@@ -208,7 +211,6 @@ var openSetup = function () {
   addValidationEventsSetupUserName();
   addColorSetupEventsWizard();
 
-  setupUserName.addEventListener('focusin', onSetupUserNameFocusIn);
   document.addEventListener('keydown', onDocumentEscPress);
 };
 
@@ -221,7 +223,6 @@ var closeSetup = function () {
   removeValidationEventsSetupUserName();
   removeColorSetupEventsWizard();
 
-  setupUserName.removeEventListener('focusin', onSetupUserNameFocusIn);
   document.removeEventListener('keydown', onDocumentEscPress);
 
   resetDefaultSetup();
@@ -257,20 +258,12 @@ var onSetupSubmitEnterPress = function (evt) {
   }
 };
 
-var onSetupUserNameFocusIn = function () {
-  setupUserName.addEventListener('focusout', onSetupUserNameFocusOut);
-  document.removeEventListener('keydown', onDocumentEscPress);
-  setupUserName.removeEventListener('focusin', onSetupUserNameFocusIn);
-};
-
-var onSetupUserNameFocusOut = function () {
-  setupUserName.addEventListener('focusin', onSetupUserNameFocusIn);
-  document.addEventListener('keydown', onDocumentEscPress);
-  setupUserName.removeEventListener('focusout', onSetupUserNameFocusOut);
-};
-
 var onDocumentEscPress = function (evt) {
   if (evt.keyCode === keyCode.ESC) {
+    if (document.activeElement === setupUserName) {
+      return;
+    }
+
     closeSetup();
     resetDefaultSetup();
   }
@@ -345,35 +338,37 @@ var removeValidationEventsSetupUserName = function () {
 
 /* Изменение цвета мантии, глаз и фаербола персонажа по нажатию */
 
-var getCurrentArrayElementNumber = function (currentNumber, array) {
-  if (currentNumber < array.length - 1) {
-    currentNumber++;
+var setElementColor = function (color, element, elementColorStyle, elementInput) {
+  element.setAttribute('style', elementColorStyle + ': ' + color + ';');
+  elementInput.setAttribute('value', color);
+};
+
+var getCurrentArrayElementNumber = function (number, array) {
+  if (number < array.length - 1) {
+    number++;
   } else {
-    currentNumber = 0;
+    number = 0;
   }
 
-  return currentNumber;
+  return number;
 };
 
 var onSetupCoatClick = function () {
-  wizardParameter.coatColor.currentNumber = getCurrentArrayElementNumber(wizardParameter.coatColor.currentNumber, wizardParameter.coatColor.VALUES);
+  currentNumber.coatColor = getCurrentArrayElementNumber(currentNumber.coatColor, wizardParameter.coatColor.VALUES);
 
-  setupCoat.style.fill = wizardParameter.coatColor.VALUES[wizardParameter.coatColor.currentNumber];
-  setupCoatColorInput.setAttribute('value', wizardParameter.coatColor.VALUES[wizardParameter.coatColor.currentNumber]);
+  setElementColor(wizardParameter.coatColor.VALUES[currentNumber.coatColor], setupCoat, 'fill', setupCoatColorInput);
 };
 
 var onSetupEyesClick = function () {
-  wizardParameter.eyesColor.currentNumber = getCurrentArrayElementNumber(wizardParameter.eyesColor.currentNumber, wizardParameter.eyesColor.VALUES);
+  currentNumber.eyesColor = getCurrentArrayElementNumber(currentNumber.eyesColor, wizardParameter.eyesColor.VALUES);
 
-  setupEyes.style.fill = wizardParameter.eyesColor.VALUES[wizardParameter.eyesColor.currentNumber];
-  setupEyesColorInput.setAttribute('value', wizardParameter.eyesColor.VALUES[wizardParameter.eyesColor.currentNumber]);
+  setElementColor(wizardParameter.eyesColor.VALUES[currentNumber.eyesColor], setupEyes, 'fill', setupEyesColorInput);
 };
 
 var onSetupFireballClick = function () {
-  wizardParameter.fireballColor.currentNumber = getCurrentArrayElementNumber(wizardParameter.fireballColor.currentNumber, wizardParameter.fireballColor.VALUES);
+  currentNumber.fireballColor = getCurrentArrayElementNumber(currentNumber.fireballColor, wizardParameter.fireballColor.VALUES);
 
-  setupFireball.style.backgroundColor = wizardParameter.fireballColor.VALUES[wizardParameter.fireballColor.currentNumber];
-  setupFireballColorInput.setAttribute('value', wizardParameter.fireballColor.VALUES[wizardParameter.fireballColor.currentNumber]);
+  setElementColor(wizardParameter.fireballColor.VALUES[currentNumber.fireballColor], setupFireball, 'backgroundColor', setupFireballColorInput);
 };
 
 var addColorSetupEventsWizard = function () {
@@ -394,15 +389,11 @@ var removeColorSetupEventsWizard = function () {
 var resetDefaultSetup = function () {
   setupUserName.value = wizardParameter.name.DEFAULT;
 
-  setupCoat.style.fill = wizardParameter.coatColor.DEFAULT;
-  setupCoatColorInput.setAttribute('value', wizardParameter.coatColor.DEFAULT);
-
-  setupEyes.style.fill = wizardParameter.eyesColor.DEFAULT;
-  setupEyesColorInput.setAttribute('value', wizardParameter.eyesColor.DEFAULT);
-
-  setupFireball.style.backgroundColor = wizardParameter.fireballColor.DEFAULT;
-  setupFireballColorInput.setAttribute('value', wizardParameter.fireballColor.DEFAULT);
+  setElementColor(wizardParameter.coatColor.DEFAULT, setupCoat, 'fill', setupCoatColorInput);
+  setElementColor(wizardParameter.eyesColor.DEFAULT, setupEyes, 'fill', setupEyesColorInput);
+  setElementColor(wizardParameter.fireballColor.DEFAULT, setupFireball, 'backgroundColor', setupFireballColorInput);
 };
+
 
 addEventsSetupOpen();
 var similarWizards = createSimilarWizards();
