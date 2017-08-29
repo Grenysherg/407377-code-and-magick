@@ -48,12 +48,12 @@
       <p class="header-description">
         Это игра, где главного героя, которым вам предстоит управлять и изменять заклинаниями окружающий мир зовут Пендальф Синий. Вместе с ним вас ждет увлекательное приключение&hellip; </p>
       <div class="demo"></div>
-      <div class="setup-open">
+      <div class="setup-open" tabindex="0">
         <img src="./img/user-1.jpg" class="setup-open-icon">
       </div>
     </header>
     <div class="overlay setup hidden">
-      <form class="setup-wizard-form" method="post" enctype="multipart/form-data" autocomplete="off">
+      <form class="setup-wizard-form" action="https://1510.dump.academy/code-and-magick" method="post" enctype="multipart/form-data" autocomplete="off">
         <div class="setup-title">
           <div class="setup-user">
             <div class="upload">
@@ -61,10 +61,10 @@
               <input type="file" name="avatar">
             </div>
             <label>
-              <input type="text" name="username" class="setup-user-name" value="Синий Пендальф"/>
+              <input type="text" name="username" class="setup-user-name" value="Синий Пендальф" maxlength="25" required>
             </label>
           </div>
-          <span class="setup-close">&times;</span>
+          <span class="setup-close" tabindex="0">&times;</span>
         </div>
         <div class="setup-artifacts-shop">
           <div class="setup-artifacts-cell">
@@ -90,12 +90,12 @@
                 </g>
               </svg>
             </div>
-            <input type="hidden" name="coat-color" value="rgb(101, 137, 164)">
-            <input type="hidden" name="eyes-color" value="black">
+            <input type="hidden" id="coat-color" name="coat-color" value="rgb(101, 137, 164)">
+            <input type="hidden" id="eyes-color" name="eyes-color" value="black">
           </div>
           <div class="setup-fireball-wrap">
             <div class="setup-fireball"></div>
-            <input type="hidden" name="fireball-color" value="#ee4830">
+            <input type="hidden" id="fireball-color" name="fireball-color" value="#ee4830">
           </div>
           <div class="setup-artifacts" dropzone="move">
             <div class="setup-artifacts-cell"></div>
