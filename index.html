@@ -150,24 +150,38 @@
       </div>
     </template>
     <script>
-      var fireballSize = 22;
-      var getFireballSpeed = function (left) {
-        return left ? 5 : 2;
-      };
-      var wizardSpeed = 3;
-      var wizardWidth = 70;
-      var getWizardHeight = function () {
-        return 1.337 * wizardWidth;
-      };
-      var getWizardX = function (width) {
-        return width / 2 - wizardWidth / 2;
-      };
-      var getWizardY = function (height) {
-        return height / 3 - getWizardHeight();
-      };
+      'use strict';
+      
+      (function () {
+        window.fireballSize = 22;
+        window.getFireballSpeed = function (left) {
+          return left ? 5 : 2;
+        };
+        window.wizardSpeed = 3;
+        window.wizardWidth = 70;
+        window.getWizardHeight = function () {
+          return 1.337 * wizardWidth;
+        };
+        window.getWizardX = function (width) {
+          return width / 2 - wizardWidth / 2;
+        };
+        window.getWizardY = function (height) {
+          return height / 3 - getWizardHeight();
+        };
+      })();
     </script>
-    <script src="./js/stat.js"></script>
+    <script src="./js/util.js"></script>
+    <script src="./js/canvas.js"></script>
+  
+    <script src="./js/wizard.js"></script>
+    <script src="./js/similar-wizard.js"></script>
+    <script src="./js/form.js"></script>
     <script src="./js/setup.js"></script>
+    
+    <script src="./js/gamer.js"></script>
+    <script src="./js/arrow.js"></script>
+    <script src="./js/stat.js"></script>
+    
     <script src="./js/game.js"></script>
   </body>
 </html>

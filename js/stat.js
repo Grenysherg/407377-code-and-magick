@@ -1,41 +1,36 @@
 'use strict';
 
 window.renderStatistics = function (ctx, names, times) {
-  var i;
-  var j;
-  var currentElement;
+  var canvasDomElement = document.querySelector('canvas');
 
-  var isCurrentArrowLeft;
-  var canvas = document.querySelector('canvas');
-
-  var resultMessage = 'Ура вы победили!\nСписок результатов:';
-
-  var cloud = {};
-  cloud.X = 100;
-  cloud.Y = 10;
-  cloud.WIDTH = 420;
-  cloud.HEIGHT = 270;
-  cloud.COLOR = 'rgb(255, 255, 255)';
-  cloud.OFFSET = 10;
-  cloud.PADDING = cloud.OFFSET + 5;
-
-  var cloudShadow = {};
-  cloudShadow.X = cloud.X + 10;
-  cloudShadow.Y = cloud.Y + 10;
-  cloudShadow.WIDTH = cloud.WIDTH;
-  cloudShadow.HEIGHT = cloud.HEIGHT;
-  cloudShadow.COLOR = 'rgba(0, 0, 0, 0.7)';
-  cloudShadow.OFFSET = cloud.OFFSET;
-
-  var inner = {};
-  inner.X = cloud.X + cloud.PADDING;
-  inner.Y = cloud.Y + cloud.PADDING;
-  inner.WIDTH = cloud.WIDTH - 2 * cloud.PADDING;
-  inner.HEIGHT = cloud.HEIGHT - 2 * cloud.PADDING;
+  var RESULT_MESSAGE = 'Ура вы победили!\nСписок результатов:';
 
   var text = {};
   text.LINE_HEIGHT = 20;
   text.COLOR = 'rgb(0, 0, 0)';
+
+  var resultWindow = {};
+  resultWindow.X = 100;
+  resultWindow.Y = 10;
+  resultWindow.WIDTH = 420;
+  resultWindow.HEIGHT = 270;
+  resultWindow.COLOR = 'rgb(255, 255, 255)';
+  resultWindow.OFFSET = 10;
+  resultWindow.PADDING = resultWindow.OFFSET + 5;
+
+  var resultWindowShadow = {};
+  resultWindowShadow.X = resultWindow.X + 10;
+  resultWindowShadow.Y = resultWindow.Y + 10;
+  resultWindowShadow.WIDTH = resultWindow.WIDTH;
+  resultWindowShadow.HEIGHT = resultWindow.HEIGHT;
+  resultWindowShadow.COLOR = 'rgba(0, 0, 0, 0.7)';
+  resultWindowShadow.OFFSET = resultWindow.OFFSET;
+
+  var inner = {};
+  inner.X = resultWindow.X + resultWindow.PADDING;
+  inner.Y = resultWindow.Y + resultWindow.PADDING;
+  inner.WIDTH = resultWindow.WIDTH - 2 * resultWindow.PADDING;
+  inner.HEIGHT = resultWindow.HEIGHT - 2 * resultWindow.PADDING;
 
   var histogram = {};
   histogram.WIDTH = 40;
@@ -43,273 +38,112 @@ window.renderStatistics = function (ctx, names, times) {
   histogram.INDENT_BETWEEN = 50;
   histogram.AMOUNT_IN_GROUP = 4;
 
-  var arrow = {};
-  arrow.WIDTH = 20;
-  arrow.HEIGHT = 20;
-  arrow.LEFT_X = inner.X + arrow.WIDTH;
-  arrow.RIGHT_X = inner.X + inner.WIDTH - arrow.WIDTH;
-  arrow.COLOR = 'rgb(0, 0, 0)';
-  arrow.isLeft = false;
-  arrow.isRight = false;
-
   var groupBox = {};
   groupBox.WIDTH = histogram.AMOUNT_IN_GROUP * histogram.WIDTH + (histogram.AMOUNT_IN_GROUP - 1) * histogram.INDENT_BETWEEN;
   groupBox.HEIGHT = histogram.MAX_HEIGHT + 2 * text.LINE_HEIGHT;
-  groupBox.X = inner.X + arrow.WIDTH + (inner.WIDTH - 2 * arrow.WIDTH - groupBox.WIDTH) / 2;
+  groupBox.X = inner.X + window.arrow.getObject().WIDTH + (inner.WIDTH - 2 * window.arrow.getObject().WIDTH - groupBox.WIDTH) / 2;
   groupBox.Y = inner.Y + inner.HEIGHT - groupBox.HEIGHT;
 
-  var currentUser = {};
-  currentUser.NAME = 'Вы';
-  currentUser.HISTOGRAM_COLOR = 'rgba(255, 0, 0, 1)';
+  var arrowLocation = {};
+  arrowLocation.LEFT_X = inner.X + window.arrow.getObject().WIDTH;
+  arrowLocation.RIGHT_X = inner.X + inner.WIDTH - window.arrow.getObject().WIDTH;
+  arrowLocation.Y = groupBox.Y + groupBox.HEIGHT / 2 - window.arrow.getObject().HEIGHT / 2;
 
-  arrow.Y = groupBox.Y + groupBox.HEIGHT / 2 - arrow.HEIGHT / 2;
+  var currentArrow = {};
+  currentArrow.isDrawingLeft = false;
+  currentArrow.isDrawingRight = false;
 
-  var createRandomNumber = function (min, max) {
-    return Math.round(min - 0.5 + Math.random() * (max - min + 1));
-  };
 
-  var createRandomColor = function (object) { // object = {red(0 - 255), green(0 - 255), blue(0 - 255)}
-    object.red = String(object.red) !== 'undefined' ? object.red : createRandomNumber(0, 255);
-    object.green = String(object.green) + '' !== 'undefined' ? object.green : createRandomNumber(0, 255);
-    object.blue = String(object.blue) + '' !== 'undefined' ? object.blue : createRandomNumber(0, 255);
-
-    return 'rgb(' + object.red + ', ' + object.green + ', ' + object.blue + ')';
-  };
-
-  var drawCloud = function (object, isCloud) {
-    ctx.beginPath();
-    ctx.moveTo(object.X, object.Y);
-    ctx.lineTo(object.X + object.OFFSET, object.Y + object.HEIGHT / 2);
-    ctx.lineTo(object.X, object.Y + object.HEIGHT);
-    ctx.lineTo(object.X + object.WIDTH / 2, object.Y + object.HEIGHT - object.OFFSET);
-    ctx.lineTo(object.X + object.WIDTH, object.Y + object.HEIGHT);
-    ctx.lineTo(object.X + object.WIDTH - object.OFFSET, object.Y + object.HEIGHT / 2);
-    ctx.lineTo(object.X + object.WIDTH, object.Y);
-    ctx.lineTo(object.X + object.WIDTH / 2, object.Y + object.OFFSET);
-    ctx.lineTo(object.X, object.Y);
-
-    if (isCloud) {
-      ctx.stroke();
-    }
-
-    ctx.closePath();
-    ctx.fillStyle = object.COLOR;
-    ctx.fill();
-  };
-
-  var drawStringCenter = function (string, stringY, stringColor, centerX) {
-    var stringWidth = ctx.measureText(string).width;
-
-    ctx.fillStyle = stringColor;
-    ctx.fillText(string, centerX - stringWidth / 2, stringY);
-  };
-
-  var drawLongMessage = function (message) {
-    message.split('\n').forEach(function (string, index) {
-      drawStringCenter(string, inner.Y + index * text.LINE_HEIGHT, text.COLOR, inner.X + inner.WIDTH / 2);
-    });
-  };
-
-  var drawArrow = function (object, isLeft, isTransparent) {
-    ctx.beginPath();
-
-    if (isLeft) {
-      ctx.moveTo(object.LEFT_X, object.Y);
-      ctx.lineTo(object.LEFT_X, object.Y + object.HEIGHT);
-      ctx.lineTo(object.LEFT_X - object.WIDTH, object.Y + object.HEIGHT / 2);
-      ctx.lineTo(object.LEFT_X, object.Y);
-    } else {
-      ctx.moveTo(object.RIGHT_X, object.Y);
-      ctx.lineTo(object.RIGHT_X, object.Y + object.HEIGHT);
-      ctx.lineTo(object.RIGHT_X + object.WIDTH, object.Y + object.HEIGHT / 2);
-      ctx.lineTo(object.RIGHT_X, object.Y);
-    }
-
-    ctx.closePath();
-    ctx.fillStyle = isTransparent ? 'transparent' : object.COLOR;
-    ctx.fill();
-  };
-
-  var drawArrows = function (object) {
-    if (object.currentIndex > 0) {
-      drawArrow(arrow, true, false);
-      arrow.isLeft = true;
-    } else {
-      arrow.isLeft = false;
-    }
-
-    if (object.currentIndex < object.amount - 1) {
-      drawArrow(arrow, false, false);
-      arrow.isRight = true;
-    } else {
-      arrow.isRight = false;
-    }
+  var drawContent = function () {
+    clearContent();
+    window.gamer.drawGroup(currentGroupIndex);
+    window.arrow.drawIfFulfilledCondition(ctx, currentGroupIndex, arrowLocation, currentArrow);
   };
 
   var clearContent = function () {
     ctx.clearRect(inner.X, groupBox.Y, inner.WIDTH, groupBox.HEIGHT);
 
-    ctx.fillStyle = cloud.COLOR;
+    ctx.fillStyle = resultWindow.COLOR;
     ctx.fillRect(inner.X, groupBox.Y, inner.WIDTH, groupBox.HEIGHT);
   };
 
-  var gamer = {};
-  gamer.values = [];
-  gamer.createValues = function () {
-    for (i = 0; i < names.length; i++) {
-      this.values[i] = {};
-      this.values[i]['name'] = names[i];
-      this.values[i]['time'] = times[i];
-    }
+  var enableCanvasClickEvent = function (isCurrentArrowLeft) {
+    canvasDomElement.style.cursor = 'pointer';
 
-    this.values = this.values.sort(function (a, b) {
-      return a.time - b.time ? a.time - b.time : a.name - b.name;
-    });
+    currentArrow.isSelectedLeft = isCurrentArrowLeft;
+    canvasDomElement.addEventListener('click', onCanvasClick);
   };
 
-  var group = {};
-  group.values = [];
-  group.createValues = function () {
-    var currentGamerIndex = 0;
 
-    for (i = 0; i < this.amount; i++) {
-      this.values[i] = [];
+  var onCanvasMousemove = function (evt) {
+    canvasDomElement.removeEventListener('click', onCanvasClick);
 
-      for (j = 0; j < histogram.AMOUNT_IN_GROUP && currentGamerIndex < gamer.values.length; j++, currentGamerIndex++) {
-        this.values[i][j] = {};
-        currentElement = this.values[i][j];
+    var canvasDomElementLocation = canvasDomElement.getBoundingClientRect();
 
-        var currentGamer = gamer.values[currentGamerIndex];
-        var currentHistogramHeight = currentGamer.time * histogram.MAX_HEIGHT / gamer.maxTime;
-        var currentHistogramX = groupBox.X + j * histogram.WIDTH + j * histogram.INDENT_BETWEEN;
-        var currentHistogramY = inner.Y + inner.HEIGHT - currentHistogramHeight - text.LINE_HEIGHT;
+    var mouseLocation = {};
+    mouseLocation.x = evt.pageX - canvasDomElementLocation.left;
+    mouseLocation.y = evt.pageY - canvasDomElementLocation.top;
 
-        if (currentGamer.name === currentUser.NAME) {
-          this.currentIndex = i;
-        }
-
-        currentElement.name = {
-          value: currentGamer.name,
-          x: currentHistogramX,
-          y: inner.Y + inner.HEIGHT,
-          color: text.COLOR,
-          draw: function () {
-            ctx.textBaseline = 'ideographic';
-            drawStringCenter(this.value, this.y, this.color, this.x + histogram.WIDTH / 2);
-            ctx.textBaseline = 'hanging';
-          }
-        };
-
-        currentElement.histogram = {
-          x: currentHistogramX,
-          y: currentHistogramY,
-          width: histogram.WIDTH,
-          height: currentHistogramHeight,
-          color: currentGamer.name === currentUser.NAME ? currentUser.HISTOGRAM_COLOR : createRandomColor({red: 42, green: 42}),
-          draw: function () {
-            ctx.fillStyle = this.color;
-            ctx.fillRect(this.x, this.y, this.width, this.height);
-          }
-        };
-
-        currentElement.time = {
-          value: String(Math.round(currentGamer.time)),
-          x: currentHistogramX,
-          y: currentHistogramY - text.LINE_HEIGHT,
-          color: text.COLOR,
-          draw: function () {
-            drawStringCenter(this.value, this.y, this.color, this.x + histogram.WIDTH / 2);
-          }
-        };
-      }
-    }
-  };
-  group.draw = function () {
-    for (i = 0; i < this.values[this.currentIndex].length; i++) {
-      currentElement = this.values[this.currentIndex][i];
-
-      currentElement.name.draw();
-      currentElement.histogram.draw();
-      currentElement.time.draw();
-    }
-  };
-
-  var onArrowMousemove = function (event) {
-    canvas.removeEventListener('click', onArrowClick);
-
-    var mouseXY = canvas.getBoundingClientRect();
-    var mouseX = event.pageX - mouseXY.left;
-    var mouseY = event.pageY - mouseXY.top;
-
-    drawArrow(arrow, true, true);
-
-    if (ctx.isPointInPath(mouseX, mouseY) && arrow.isLeft) {
-      canvas.style.cursor = 'pointer';
-
-      isCurrentArrowLeft = true;
-      canvas.addEventListener('click', onArrowClick);
+    if (window.arrow.isCanvasElementArrow(ctx, arrowLocation, mouseLocation, currentArrow.isDrawingLeft, true)) {
+      enableCanvasClickEvent(true);
 
       return;
     }
 
-    drawArrow(arrow, false, true);
-
-    if (ctx.isPointInPath(mouseX, mouseY) && arrow.isRight) {
-      canvas.style.cursor = 'pointer';
-
-      isCurrentArrowLeft = false;
-      canvas.addEventListener('click', onArrowClick);
+    if (window.arrow.isCanvasElementArrow(ctx, arrowLocation, mouseLocation, currentArrow.isDrawingRight, false)) {
+      enableCanvasClickEvent(false);
 
       return;
     }
 
-    canvas.style.cursor = 'default';
+    canvasDomElement.style.cursor = 'default';
   };
 
-  var onArrowClick = function () {
-    group.currentIndex = isCurrentArrowLeft ? group.currentIndex - 1 : group.currentIndex + 1;
+  var onCanvasClick = function () {
+    currentGroupIndex = currentArrow.isSelectedLeft ? currentGroupIndex - 1 : currentGroupIndex + 1;
 
-    clearContent();
-    group.draw();
-    drawArrows(group);
+    drawContent();
 
-    if (group.currentIndex === 0 || group.currentIndex === group.amount - 1) {
-      canvas.style.cursor = 'default';
-      canvas.removeEventListener('click', onArrowClick);
+    if (currentGroupIndex === 0 || currentGroupIndex === window.gamer.getGroups().length - 1) {
+      canvasDomElement.style.cursor = 'default';
+      canvasDomElement.removeEventListener('click', onCanvasClick);
     }
   };
 
-  var onArrowKeydown = function (event) {
-    var keyCode = event.keyCode;
-
-    if (keyCode === 37 && arrow.isLeft) {
-      group.currentIndex--;
-    } else if (keyCode === 39 && arrow.isRight) {
-      group.currentIndex++;
+  var onDocumentLeftArrowPress = function (evt) {
+    if (window.util.isLeftArrowPressed(evt) && currentArrow.isDrawingLeft) {
+      currentGroupIndex--;
+      drawContent();
     }
-
-    clearContent();
-    group.draw();
-    drawArrows(group);
   };
+
+  var onDocumentRightArrowPress = function (evt) {
+    if (window.util.isRightArrowPressed(evt) && currentArrow.isDrawingRight) {
+      currentGroupIndex++;
+      drawContent();
+    }
+  };
+
+
+  var addDocumentEvents = function () {
+    document.addEventListener('keydown', onDocumentLeftArrowPress);
+    document.addEventListener('keydown', onDocumentRightArrowPress);
+  };
+
 
   ctx.font = '16px PT Mono';
   ctx.textBaseline = 'hanging';
 
-  drawCloud(cloudShadow, false);
-  drawCloud(cloud, true);
+  window.canvas.drawCloud(ctx, resultWindowShadow, false);
+  window.canvas.drawCloud(ctx, resultWindow, true);
 
-  drawLongMessage(resultMessage);
+  window.canvas.drawLongMessageWithLineBreak(ctx, RESULT_MESSAGE, inner, text);
 
-  gamer.createValues();
-  gamer.maxTime = gamer.values[gamer.values.length - 1]['time'];
+  window.gamer.createGroups(ctx, names, times, histogram, groupBox, inner, text);
+  var currentGroupIndex = window.gamer.getGroupWithCurrentUser();
 
-  group.amount = Math.ceil(gamer.values.length / histogram.AMOUNT_IN_GROUP);
-  group.createValues();
-  group.draw();
+  drawContent();
 
-  drawArrows(group);
-
-  canvas.addEventListener('mousemove', onArrowMousemove);
-  document.addEventListener('keydown', onArrowKeydown);
+  canvasDomElement.addEventListener('mousemove', onCanvasMousemove);
+  addDocumentEvents();
 };
