@@ -11,13 +11,13 @@
   window.dialog = {};
 
   window.dialog.onAvatarInputMouseDown = function (evt) {
-    var setupDisplacementArea = {};
-    setupDisplacementArea.minX = setupDomElement.clientWidth / 2;
-    setupDisplacementArea.maxX = document.documentElement.offsetWidth - setupDomElement.clientWidth / 2;
-    setupDisplacementArea.minY = 0;
-    setupDisplacementArea.maxY = window.innerHeight - setupDomElement.clientWidth;
+    var setupDragArea = {};
+    setupDragArea.minX = setupDomElement.clientWidth / 2;
+    setupDragArea.maxX = document.documentElement.offsetWidth - setupDomElement.clientWidth / 2;
+    setupDragArea.minY = 0;
+    setupDragArea.maxY = window.innerHeight - setupDomElement.clientHeight;
 
-    window.globalModuleDragFreeElement(evt, setupDomElement, setupDisplacementArea);
+    window.dragFreeElement(evt, setupDomElement, setupDragArea);
   };
 
   window.dialog.resetOffset = function () {
