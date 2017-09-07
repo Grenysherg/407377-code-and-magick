@@ -6,6 +6,8 @@
   var setupOpenDomElement = document.querySelector('.setup-open');
   var setupCloseDomElement = setupDomElement.querySelector('.setup-close');
 
+  var avatarInput = setupDomElement.querySelector('#avatar');
+
   var setupUserNameDomElement = setupDomElement.querySelector('.setup-user-name');
 
 
@@ -17,6 +19,7 @@
     addEventsSetupSubmit();
     window.form.addValidatingEventsFormUserName();
     window.form.addColorEventsFormWizard();
+    avatarInput.addEventListener('mousedown', window.dialog.onAvatarInputMouseDown);
 
     document.addEventListener('keydown', onDocumentEscPress);
   };
@@ -29,10 +32,12 @@
     removeEventsSetupSubmit();
     window.form.removeValidatingEventsFormUserName();
     window.form.removeColorEventsFormWizard();
+    avatarInput.removeEventListener('mousedown', window.dialog.onAvatarInputMouseDown);
 
     document.removeEventListener('keydown', onDocumentEscPress);
 
     window.form.resetDefaultSetup();
+    window.dialog.resetOffset();
   };
 
 
@@ -114,6 +119,67 @@
     setupSubmitDomElement.removeEventListener('click', onSetupSubmitClick);
     setupSubmitDomElement.removeEventListener('keydown', onSetupSubmitEnterPress);
   };
+
+
+  /* магазин */
+
+  var DOM_DRAGGED_THING_TAG_NAME = 'img';
+
+  var domShop = document.querySelector('.setup-artifacts-shop');
+  var domArtifactBox = document.querySelector('.setup-artifacts');
+  var domArtifactCells = domArtifactBox.querySelectorAll('.setup-artifacts-cell');
+
+  var domDraggedThing = null;
+
+  var addStyleOutlineDomArtifactCells = function () {
+    for (var i = 0; i < domArtifactCells.length; i++) {
+      domArtifactCells[i].style.outline = '2px dashed red';
+    }
+  };
+
+  var removeStyleOutlineDomArtifactCells = function () {
+    for (var i = 0; i < domArtifactCells.length; i++) {
+      domArtifactCells[i].style.outline = 'none';
+    }
+  };
+
+  domShop.addEventListener('dragstart', function (evt) {
+    if (evt.target.tagName.toLowerCase() === DOM_DRAGGED_THING_TAG_NAME) {
+      domDraggedThing = evt.target;
+      addStyleOutlineDomArtifactCells();
+      evt.dataTransfer.setData('text/plain', evt.target.alt);
+    }
+  });
+
+  domShop.addEventListener('dragend', function () {
+    removeStyleOutlineDomArtifactCells();
+  });
+
+  domArtifactBox.addEventListener('dragover', function (evt) {
+    evt.preventDefault();
+    addStyleOutlineDomArtifactCells();
+    return false;
+  });
+
+  domArtifactBox.addEventListener('drop', function (evt) {
+    evt.target.style.backgroundColor = '';
+    evt.target.appendChild(domDraggedThing);
+    evt.preventDefault();
+  });
+
+  domArtifactBox.addEventListener('dragenter', function (evt) {
+    evt.target.style.backgroundColor = 'yellow';
+    evt.preventDefault();
+  });
+
+  domArtifactBox.addEventListener('dragleave', function (evt) {
+    evt.target.style.backgroundColor = '';
+    evt.preventDefault();
+  });
+
+  domArtifactBox.addEventListener('dragend', function () {
+    removeStyleOutlineDomArtifactCells();
+  });
 
 
   addEventsSetupOpen();
