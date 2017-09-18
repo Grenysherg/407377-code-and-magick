@@ -58,9 +58,17 @@
 
   /* Изменение цвета мантии, глаз и фаербола персонажа по нажатию */
 
-  var setElementColor = function (color, element, elementColorStyle, elementInput) {
-    element.style[elementColorStyle] = color;
-    elementInput.setAttribute('value', color);
+
+  var fillElement = function (domElement, color) {
+    domElement.style.fill = color;
+  };
+
+  var changeElementBackground = function (domElement, color) {
+    domElement.style.backgroundColor = color;
+  };
+
+  var changeInputColor = function (domElementInput, color) {
+    domElementInput.setAttribute('value', color);
   };
 
   var getCurrentArrayElementNumber = function (number, array) {
@@ -73,22 +81,37 @@
     return number;
   };
 
+  var changeCoatColor = function (color) {
+    fillElement(formCoatDomElement, color);
+    changeInputColor(formCoatColorInput, color);
+  };
+
+  var changeEyesColor = function (color) {
+    fillElement(formEyesDomElement, color);
+    changeInputColor(formEyesColorInput, color);
+  };
+
+  var changeFireballColor = function (color) {
+    changeElementBackground(formFireballDomElement, color);
+    changeInputColor(formFireballColorInput, color);
+  };
+
   var onSetupCoatClick = function () {
     currentNumber.coatColor = getCurrentArrayElementNumber(currentNumber.coatColor, window.wizard.COAT_COLORS);
 
-    setElementColor(window.wizard.COAT_COLORS[currentNumber.coatColor], formCoatDomElement, 'fill', formCoatColorInput);
+    window.colorizeElement(window.wizard.COAT_COLORS, currentNumber.coatColor, changeCoatColor);
   };
 
   var onSetupEyesClick = function () {
     currentNumber.eyesColor = getCurrentArrayElementNumber(currentNumber.eyesColor, window.wizard.EYES_COLORS);
 
-    setElementColor(window.wizard.EYES_COLORS[currentNumber.eyesColor], formEyesDomElement, 'fill', formEyesColorInput);
+    window.colorizeElement(window.wizard.EYES_COLORS, currentNumber.eyesColor, changeEyesColor);
   };
 
   var onSetupFireballClick = function () {
     currentNumber.fireballColor = getCurrentArrayElementNumber(currentNumber.fireballColor, window.wizard.FIREBALL_COLORS);
 
-    setElementColor(window.wizard.FIREBALL_COLORS[currentNumber.fireballColor], formFireballDomElement, 'backgroundColor', formFireballColorInput);
+    window.colorizeElement(window.wizard.FIREBALL_COLORS, currentNumber.fireballColor, changeFireballColor);
   };
 
 
@@ -123,8 +146,8 @@
   window.form.resetDefaultSetup = function () {
     formUserNameDomElement.value = defaultValue.name;
 
-    setElementColor(defaultValue.coatColor, formCoatDomElement, 'fill', formCoatColorInput);
-    setElementColor(defaultValue.eyesColor, formEyesDomElement, 'fill', formEyesColorInput);
-    setElementColor(defaultValue.fireballColor, formFireballDomElement, 'backgroundColor', formFireballColorInput);
+    changeCoatColor(defaultValue.coatColor);
+    changeEyesColor(defaultValue.eyesColor);
+    changeFireballColor(defaultValue.fireballColor);
   };
 })();
