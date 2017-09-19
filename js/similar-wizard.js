@@ -25,7 +25,7 @@
       function (loadWizards) {
         similarWizards = loadWizards;
 
-        window.similarWizard.renderCollection(window.util.sortArrayInRandomOrder(loadWizards).slice(0, SIMILAR_WIZARD_AMOUNT));
+        window.similarWizard.renderCollection(window.util.sortArrayInRandomOrder(similarWizards).slice(0, SIMILAR_WIZARD_AMOUNT));
       },
       function (errorMessage) {
         window.util.showSystemMessage(errorMessage, 'error');
