@@ -9,7 +9,6 @@
   var formEyesColorInput = formDomElement.querySelector('#eyes-color');
   var formFireballDomElement = formDomElement.querySelector('.setup-fireball');
   var formFireballColorInput = formDomElement.querySelector('#fireball-color');
-  var formSubmitDomElement = formDomElement.querySelector('.setup-submit');
 
   var currentNumber = {};
   currentNumber.coatColor = 0;
