@@ -40,6 +40,17 @@
     window.dialog.resetOffset();
   };
 
+  var pressSetupSubmit = function (evt) {
+    evt.preventDefault();
+    if (!window.form.getIsEnableSetupSubmitEvents) {
+      return;
+    }
+
+    window.form.onSubmit();
+    window.form.resetDefaultSetup();
+    closeSetup();
+  };
+
 
   var onSetupOpenClick = function () {
     openSetup();
@@ -61,21 +72,13 @@
     }
   };
 
-  var onSetupSubmitClick = function () {
-    if (window.form.getIsEnableSetupSubmitEvents) {
-      return;
-    }
-
-    closeSetup();
+  var onSetupSubmitClick = function (evt) {
+    pressSetupSubmit(evt);
   };
 
   var onSetupSubmitEnterPress = function (evt) {
     if (window.util.isEnterPressed(evt)) {
-      if (window.form.getIsEnableSetupSubmitEvents) {
-        return;
-      }
-
-      closeSetup();
+      pressSetupSubmit(evt);
     }
   };
 
@@ -111,11 +114,13 @@
   };
 
   var addEventsSetupSubmit = function () {
+    setupSubmitDomElement.addEventListener('submit', window.form.onSubmit);
     setupSubmitDomElement.addEventListener('click', onSetupSubmitClick);
     setupSubmitDomElement.addEventListener('keydown', onSetupSubmitEnterPress);
   };
 
   var removeEventsSetupSubmit = function () {
+    setupSubmitDomElement.removeEventListener('submit', window.form.onSubmit);
     setupSubmitDomElement.removeEventListener('click', onSetupSubmitClick);
     setupSubmitDomElement.removeEventListener('keydown', onSetupSubmitEnterPress);
   };
@@ -183,6 +188,7 @@
 
 
   addEventsSetupOpen();
+
   window.similarWizard.createListDomElement();
   setupDomElement.querySelector('.setup-similar').classList.remove('hidden');
 })();

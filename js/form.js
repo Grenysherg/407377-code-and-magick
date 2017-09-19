@@ -9,6 +9,7 @@
   var formEyesColorInput = formDomElement.querySelector('#eyes-color');
   var formFireballDomElement = formDomElement.querySelector('.setup-fireball');
   var formFireballColorInput = formDomElement.querySelector('#fireball-color');
+  var formSubmitDomElement = formDomElement.querySelector('.setup-submit');
 
   var currentNumber = {};
   currentNumber.coatColor = 0;
@@ -141,6 +142,18 @@
     formCoatDomElement.removeEventListener('click', onSetupCoatClick);
     formEyesDomElement.removeEventListener('click', onSetupEyesClick);
     formFireballDomElement.removeEventListener('click', onSetupFireballClick);
+  };
+
+  window.form.onSubmit = function () {
+    window.backend.save(
+        'https://1510.dump.academy/code-and-magick',
+        new FormData(formDomElement),
+        function () {
+          window.util.showSystemMessage('Данные формы отправлены успешно', 'success');
+        },
+        function (errorMessage) {
+          window.util.showSystemMessage(errorMessage, 'error');
+        });
   };
 
   window.form.resetDefaultSetup = function () {

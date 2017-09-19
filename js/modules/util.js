@@ -22,6 +22,23 @@
     return array[this.createRandomInteger(0, array.length - 1)];
   };
 
+  window.util.sortArrayInRandomOrder = function (array) {
+    var arrayElementNewIndex = null;
+    var arrayStoreElement = null;
+
+
+    array.reverse().forEach(function (it, index) {
+      arrayElementNewIndex = Math.floor(Math.random() * (index + 1));
+
+      arrayStoreElement = array[arrayElementNewIndex];
+      array[arrayElementNewIndex] = it;
+      it = arrayStoreElement;
+    });
+
+
+    return array;
+  };
+
   window.util.createRandomRGBColor = function (object) { // object = {red(0 - 255), green(0 - 255), blue(0 - 255)}
     object.red = object.red || this.createRandomInteger(rgb.MIN, rgb.MAX);
     object.green = object.green || this.createRandomInteger(rgb.MIN, rgb.MAX);
@@ -44,5 +61,26 @@
 
   window.util.isRightArrowPressed = function (evt) {
     return evt.keyCode === keyCode.RIGHT_ARROW;
+  };
+
+  window.util.showSystemMessage = function (text, stateString) {
+    var domSystemMessage = document.querySelector('.system-message');
+    var domSystemMessageClose = domSystemMessage.querySelector('.system-message__close');
+
+
+    var onDomSystemMessageCloseClick = function () {
+      domSystemMessage.classList.add('hidden');
+      domSystemMessage.classList.remove('system-message--' + stateString);
+
+      domSystemMessageClose.removeEventListener('click', onDomSystemMessageCloseClick);
+    };
+
+
+    domSystemMessage.classList.add('system-message--' + stateString);
+    domSystemMessage.classList.remove('hidden');
+
+    domSystemMessage.querySelector('.system-message__text').textContent = text;
+
+    domSystemMessageClose.addEventListener('click', onDomSystemMessageCloseClick);
   };
 })();
