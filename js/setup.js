@@ -114,13 +114,11 @@
   };
 
   var addEventsSetupSubmit = function () {
-    setupSubmitDomElement.addEventListener('submit', window.form.onSubmit);
     setupSubmitDomElement.addEventListener('click', onSetupSubmitClick);
     setupSubmitDomElement.addEventListener('keydown', onSetupSubmitEnterPress);
   };
 
   var removeEventsSetupSubmit = function () {
-    setupSubmitDomElement.removeEventListener('submit', window.form.onSubmit);
     setupSubmitDomElement.removeEventListener('click', onSetupSubmitClick);
     setupSubmitDomElement.removeEventListener('keydown', onSetupSubmitEnterPress);
   };
