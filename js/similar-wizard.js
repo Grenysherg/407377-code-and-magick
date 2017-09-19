@@ -3,8 +3,11 @@
 (function () {
   var SIMILAR_WIZARD_AMOUNT = 4;
 
+  var similarWizards = [];
+
   var similarWizardListDomElement = document.querySelector('.setup-similar-list');
   var similarWizardTemplate = document.querySelector('#similar-wizard-template').content;
+
 
   var renderWizard = function (wizard) {
     var domElement = similarWizardTemplate.cloneNode(true);
@@ -15,6 +18,19 @@
 
     return domElement;
   };
+
+
+  window.backend.load(
+      'https://1510.dump.academy/code-and-magick/data',
+      function (loadWizards) {
+        similarWizards = loadWizards;
+
+        window.similarWizard.renderCollection(window.util.sortArrayInRandomOrder(loadWizards).slice(0, SIMILAR_WIZARD_AMOUNT));
+      },
+      function (errorMessage) {
+        window.util.showSystemMessage(errorMessage, 'error');
+      }
+  );
 
 
   window.similarWizard = {};
@@ -33,5 +49,17 @@
           window.util.showSystemMessage(errorMessage, 'error');
         }
     );
+  };
+
+  window.similarWizard.renderCollection = function (wizards) {
+    var fragment = document.createDocumentFragment();
+
+
+    wizards.forEach(function (it) {
+      fragment.appendChild(renderWizard(it));
+    });
+
+    similarWizardListDomElement.innerHTML = '';
+    similarWizardListDomElement.appendChild(fragment);
   };
 })();

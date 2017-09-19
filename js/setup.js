@@ -189,6 +189,5 @@
 
   addEventsSetupOpen();
 
-  window.similarWizard.createListDomElement();
   setupDomElement.querySelector('.setup-similar').classList.remove('hidden');
 })();
