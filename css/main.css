@@ -38,6 +38,77 @@ form {
   margin-bottom: 0;
 }
 
+.system-message {
+  box-sizing: border-box;
+  
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  padding: 15px 0;
+}
+
+.system-message--error {
+  background-color: red;
+}
+
+.system-message--success {
+  background-color: green;
+}
+
+.system-message__text {
+  margin: 0;
+  margin-left: auto;
+  margin-right: auto;
+  
+  font-size: 20px;
+  color: white;
+}
+
+.system-message__close {
+  box-sizing: inherit;
+  
+  position: relative;
+  
+  width: 30px;
+  height: 30px;
+  margin-right: 15px;
+  padding: 0;
+  
+  text-indent: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  
+  background-color: transparent;
+  border: none;
+  
+  cursor: pointer;
+}
+
+.system-message__close:before,
+.system-message__close:after {
+  content: "";
+  
+  position: absolute;
+  top: 0;
+  left: 15px;
+  
+  height: 30px;
+  width: 3px;
+  background-color: white;
+}
+.system-message__close:before {
+  transform: rotate(45deg);
+}
+.system-message__close:after {
+  transform: rotate(-45deg);
+}
+
 .hidden {
   display: none;
 }

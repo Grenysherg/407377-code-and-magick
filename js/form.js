@@ -143,6 +143,18 @@
     formFireballDomElement.removeEventListener('click', onSetupFireballClick);
   };
 
+  window.form.onSubmit = function () {
+    window.backend.save(
+        'https://1510.dump.academy/code-and-magick',
+        new FormData(formDomElement),
+        function () {
+          window.util.showSystemMessage('Данные формы отправлены успешно', 'success');
+        },
+        function (errorMessage) {
+          window.util.showSystemMessage(errorMessage, 'error');
+        });
+  };
+
   window.form.resetDefaultSetup = function () {
     formUserNameDomElement.value = defaultValue.name;
 

@@ -8,6 +8,11 @@
     <title>Код и Магия</title>
   </head>
   <body>
+    <div class="system-message hidden">
+      <p class="system-message__text"></p>
+      <button class="system-message__close" type="button">Закрыть</button>
+    </div>
+    
     <header>
       <svg style="display: none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 62
         86">
@@ -170,10 +175,11 @@
         };
       })();
     </script>
-    <script src="js/modules/util.js"></script>
-    <script src="js/modules/canvas.js"></script>
-    <script src="js/modules/drag-free-element.js"></script>
-    <script src="js/modules/colorize-element.js"></script>
+    <script src="./js/modules/util.js"></script>
+    <script src="./js/modules/backend.js"></script>
+    <script src="./js/modules/canvas.js"></script>
+    <script src="./js/modules/drag-free-element.js"></script>
+    <script src="./js/modules/colorize-element.js"></script>
   
     <script src="./js/wizard.js"></script>
     <script src="./js/similar-wizard.js"></script>
