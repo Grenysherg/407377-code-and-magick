@@ -19,13 +19,29 @@
     return domElement;
   };
 
+  var getRank = function (wizard, similarWizard) {
+    var rank = 0;
+
+
+    if (similarWizard.colorCoat === wizard.coatColor) {
+      rank += 2;
+    }
+
+    if (similarWizard.colorEyes === wizard.eyesColor) {
+      rank += 1;
+    }
+
+
+    return rank;
+  };
+
 
   window.backend.load(
       'https://1510.dump.academy/code-and-magick/data',
       function (loadWizards) {
         similarWizards = loadWizards;
 
-        window.similarWizard.renderCollection(window.util.sortArrayInRandomOrder(similarWizards).slice(0, SIMILAR_WIZARD_AMOUNT));
+        window.similarWizard.renderCollection(window.util.sortArrayInRandomOrder(loadWizards).slice(0, SIMILAR_WIZARD_AMOUNT));
       },
       function (errorMessage) {
         window.util.showSystemMessage(errorMessage, 'error');
@@ -61,5 +77,21 @@
 
     similarWizardListDomElement.innerHTML = '';
     similarWizardListDomElement.appendChild(fragment);
+  };
+
+  window.similarWizard.sort = function (wizard) {
+    similarWizards.sort(function (left, right) {
+      var rankDiff = getRank(wizard, right) - getRank(wizard, left);
+
+
+      if (rankDiff === 0) {
+        rankDiff = similarWizards.indexOf(left) - similarWizards.indexOf(right);
+      }
+
+
+      return rankDiff;
+    });
+
+    window.similarWizard.renderCollection(similarWizards.slice(0, SIMILAR_WIZARD_AMOUNT));
   };
 })();

@@ -10,6 +10,10 @@
   var formFireballDomElement = formDomElement.querySelector('.setup-fireball');
   var formFireballColorInput = formDomElement.querySelector('#fireball-color');
 
+  var wizard = {};
+  wizard.coatColor = formCoatColorInput.getAttribute('value');
+  wizard.eyesColor = formEyesColorInput.getAttribute('value');
+
   var currentNumber = {};
   currentNumber.coatColor = 0;
   currentNumber.eyesColor = 0;
@@ -59,6 +63,13 @@
   /* Изменение цвета мантии, глаз и фаербола персонажа по нажатию */
 
 
+  var updateSimilarWizards = function () {
+    wizard.coatColor = formCoatColorInput.getAttribute('value');
+    wizard.eyesColor = formEyesColorInput.getAttribute('value');
+
+    window.similarWizard.sort(wizard);
+  };
+
   var fillElement = function (domElement, color) {
     domElement.style.fill = color;
   };
@@ -100,18 +111,21 @@
     currentNumber.coatColor = getCurrentArrayElementNumber(currentNumber.coatColor, window.wizard.COAT_COLORS);
 
     window.colorizeElement(window.wizard.COAT_COLORS, currentNumber.coatColor, changeCoatColor);
+    window.debounce(updateSimilarWizards);
   };
 
   var onSetupEyesClick = function () {
     currentNumber.eyesColor = getCurrentArrayElementNumber(currentNumber.eyesColor, window.wizard.EYES_COLORS);
 
     window.colorizeElement(window.wizard.EYES_COLORS, currentNumber.eyesColor, changeEyesColor);
+    window.debounce(updateSimilarWizards);
   };
 
   var onSetupFireballClick = function () {
     currentNumber.fireballColor = getCurrentArrayElementNumber(currentNumber.fireballColor, window.wizard.FIREBALL_COLORS);
 
     window.colorizeElement(window.wizard.FIREBALL_COLORS, currentNumber.fireballColor, changeFireballColor);
+    window.debounce(updateSimilarWizards);
   };
 
 
